@@ -7,4 +7,4 @@ COPY build/install/backend/lib/*.jar /backend/lib/
 
 WORKDIR /backend
 
-CMD ["sh", "-c", "bin/backend" ]
+CMD ["bin/backend", "-Xms:1G", "-Xmx:2G"]
