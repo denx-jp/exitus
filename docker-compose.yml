@@ -26,9 +26,16 @@ services:
     build: ./backend
     container_name: "exitus-backend"
     ports:
-      - 3001:3001
+      - 3001:8080
     volumes:
-      - ./bff/src:/api/src
+      - ./backend:./backend
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+    depends_on:
+      - db
 
   db:
     image: mysql:5.7
