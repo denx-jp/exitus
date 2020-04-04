@@ -1,0 +1,59 @@
+version: "3.0"
+services:
+  frontend:
+    restart: always
+    build: ./frontend
+    container_name: "exitus-frontend"
+    ports:
+      - 3000:8080
+    volumes: 
+      - ./frontend:./frontend
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+    depends_on:
+      - db
+      - session-redis
+
+  # このサーバーについて実装をお願いします
+  backend:
+    restart: always
+    build: ./backend
+    container_name: "exitus-backend"
+    ports:
+      - 3001:3001
+    volumes:
+      - ./bff/src:/api/src
+
+  db:
+    image: mysql:5.7
+    container_name: exitus-maindb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 33063:3306
+
+  session-redis:
+    restart: always
+    container_name: exitus-session-redis
+    image: redis:latest
+    volumes:
+      - ./docker/redis/data:/data
+    ports:
+      - 63790:6379
+    command: redis-server --appendonly yes
+
