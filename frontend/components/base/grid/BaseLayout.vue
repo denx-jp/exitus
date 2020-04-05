@@ -1,9 +1,9 @@
 <template>
-  <div class="flex ma-4">
+  <div class="flex ">
     <div class="w-full">
       <slot name="left-window" />
     </div>
-    <div>
+    <div class="w-full">
       <slot name="right-window" />
     </div>
   </div>
